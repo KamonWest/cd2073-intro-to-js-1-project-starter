@@ -40,6 +40,7 @@ const products = [
 
 /* Empty array named cart to hold the items in the cart */
 let cart = [];
+
 /* Create a function named addProductToCart that takes in the product productId as an argument
   - addProductToCart should get the correct product based on the productId
   - addProductToCart should then increase the product's quantity
@@ -47,29 +48,25 @@ let cart = [];
 */
 function addProductToCart(productId) {
   // Finds the product by productId in the products array
-// If product exists in the cart, increases the quantity
-// let product = products.findIndex(product => product.productId === productId);
+  let product = getProductByIdFromList(productId, products);
 
-if (cart.find(item => item.productId === productId)) {
-let cartItem = cart.findIndex(item => item.productId === productId);
-cart[cartItem].quantity += 1;
- console.log('product exists')
-} else {
-console.log('product')
-let product = products.find(product => product.productId === productId);
-
-  cart.push(product);
-  let cartItem = cart.findIndex(item => item.productId === productId);
-  cart[cartItem].quantity += 1;
- console.log('product does not exist')
+   // If product doesn't exist, adds it to the cart
+   if(!cart.includes(product)) {
+    cart.push(product);
+   }
+ // If product exists in the cart, increases the quantity  
+  increaseQuantity(productId);
 }
+
+/* helper function to get product by productId */
+function getProductByIdFromList(productId, productList) {
+  return productList.find((product) => product.productId === productId);
 }
 
 /* Create a function named increaseQuantity that takes in the productId as an argument
   - increaseQuantity should get the correct product based on the productId
   - increaseQuantity should then increase the product's quantity
 */
-
 function increaseQuantity(productId) {
   // Finds the product in the cart by productId
   const itemIndex = cart.findIndex((item) => item.productId === productId);
@@ -90,8 +87,8 @@ function decreaseQuantity(productId) {
   cart[itemIndex].quantity--
   
     // If the quantity reaches 0, removes the product from the cart
-    if (cart[itemIndex].quantity < 0) {
-      removeProductFromCart(itemIndex);
+    if (cart[itemIndex].quantity === 0) {
+      removeProductFromCart(productId);
     }}
 
 /* Create a function named removeProductFromCart that takes in the productId as an argument
@@ -104,11 +101,10 @@ function decreaseQuantity(productId) {
 function removeProductFromCart(productId) {
   // Filter out the product by productId from the cart
   const itemIndex = cart.findIndex((item) => item.productId === productId);
-// cart[itemIndex].quantity = 0;
+
+  cart[itemIndex].quantity = 0;
   // If the product is found, update the quantity to 0
-    console.log("before", cart)
     cart.splice(itemIndex, 1);
-    console.log("after", cart)
 
   }
 
@@ -157,18 +153,15 @@ function pay(amount) {
   // Get the total amount of the products in the cart
   totalPaid += amount;
 
-  let change = totalPaid - cartTotal(); // Calculate the change to be returned
+  let remaining = totalPaid - cartTotal(); // Calculate the change to be returned
 
   // If the amount paid is less than the total, return the remaining balance
-  // if (amount < totalPaid) {
-  //  return totalPaid - amount;
-  // }
-  console.log("change", change)
- if (change > -1) {
-  totalPaid = 0
+ if (remaining >= 0) {
+  totalPaid = 0;
+  emptyCart()
  }
-  // If the amount paid is greater than the total, return the total amount due to customer
-  return change;
+  // Return the total amount due to customer
+  return remaining;
 }
 
 /* Place stand out suggestions here (stand out suggestions can be found at the bottom of the project rubric.)*/
